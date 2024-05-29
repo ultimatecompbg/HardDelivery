@@ -14,6 +14,11 @@ namespace HardDelivery.Models
 		public string Name { get; set; }
 		[Required]
 		public int Password { get; set; }
+		public List<Delivery> Delivered = new List<Delivery>();
+        public List<Delivery> Sended = new List<Delivery>();
+        public List<Delivery> Received = new List<Delivery>();
+        public List<Payment> ReceivedPayments = new List<Payment>();
+        public List<Payment> SentPayments = new List<Payment>();
 
-	}
+    }
 }

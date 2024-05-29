@@ -1,9 +1,12 @@
 ﻿using HardDelivery.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 namespace HardDelivery.Data
 {
-	public class DBContext : DbContext
+	public class DBContext : IdentityDbContext<IdentityUser, IdentityRole, string>
 	{
 		public DBContext() { }
 		public DBContext(DbContextOptions<DBContext> options) : base(options)
@@ -26,6 +29,36 @@ namespace HardDelivery.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
-		}
+
+            modelBuilder.Entity<Delivery>()
+                .HasOne(d => d.Courier)
+                .WithMany(d => d.Delivered)
+                .HasForeignKey(d => d.CourierId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Delivery>()
+                .HasOne(d => d.Sender)
+                .WithMany(d => d.Sended)
+                .HasForeignKey(d => d.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Delivery>()
+                .HasOne(d => d.Receiver)
+                .WithMany(d => d.Received)
+                .HasForeignKey(d => d.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Payment>()
+               .HasOne(d => d.Sender)
+               .WithMany(s => s.SentPayments)
+               .HasForeignKey(d => d.SenderId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(d => d.Receiver)
+                .WithMany(s => s.ReceivedPayments)
+                .HasForeignKey(d => d.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+        }
 	}
 }
